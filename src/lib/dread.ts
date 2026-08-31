@@ -1,3 +1,9 @@
+export type ReceiptRow = {
+  label: string;
+  value: string;
+  tone?: "demean";
+};
+
 export type DreadReport = {
   age: number;
   caseId: string;
@@ -6,8 +12,10 @@ export type DreadReport = {
   coffeeIndifference: number;
   remainingSunsets: number;
   significanceDust: number;
+  npcScore: number;
   verdict: string;
   omens: string[];
+  receipt: ReceiptRow[];
   generatedAt: string;
 };
 
@@ -49,6 +57,32 @@ const omensPool = [
   "Your horoscope was written by a tired intern named Kyle.",
 ];
 
+const timelineImpactPool = [
+  "none detected",
+  "statistically zero",
+  "negative, somehow",
+];
+
+const cosmicRolePool = [
+  "background extra",
+  "set dressing",
+  "crowd blur",
+  "uncredited cameo",
+];
+
+const whoCaresPool = [
+  "not the universe",
+  "nobody. next question.",
+  "see: nobody",
+];
+
+const significanceStatusPool = [
+  "you are nothing",
+  "none detected",
+  "cosmically irrelevant",
+  "void-adjacent",
+];
+
 export function generateDread(age: number): DreadReport {
   const rand = mulberry32(Math.floor(age * 1337.42 + 7));
 
@@ -77,6 +111,10 @@ export function generateDread(age: number): DreadReport {
 
   const significanceDust = Math.max(0.00004, rand() * 0.018);
 
+  const npcScore = clamp(71 + rand() * 28.9, 71, 99.9);
+
+  const rememberedIn100Years = Math.floor(rand() * 3);
+
   const caseId = `COS-${age.toString().padStart(2, "0")}-${Math.floor(rand() * 9999)
     .toString()
     .padStart(4, "0")}`;
@@ -97,6 +135,69 @@ export function generateDread(age: number): DreadReport {
       "Applicant has achieved a rare level of cosmic irrelevance. The void sends its regards.";
   }
 
+  const receipt: ReceiptRow[] = [
+    {
+      label: "Estimated remaining sunsets",
+      value: remainingSunsets.toLocaleString(),
+    },
+    {
+      label: "People who will remember you in 100 years",
+      value: rememberedIn100Years === 0 ? "nobody" : String(rememberedIn100Years),
+      tone: "demean",
+    },
+    {
+      label: "Times the universe thought about you today",
+      value: "0",
+      tone: "demean",
+    },
+    {
+      label: "Cosmic search results for your name",
+      value: "0 results (did you mean: nobody?)",
+      tone: "demean",
+    },
+    {
+      label: "NPC detection score",
+      value: `${npcScore.toFixed(1)}%`,
+    },
+    {
+      label: "Plotlines involving you",
+      value: "0",
+      tone: "demean",
+    },
+    {
+      label: "Impact on the timeline",
+      value: pick(timelineImpactPool, rand, 1)[0],
+      tone: "demean",
+    },
+    {
+      label: "Your cosmic role",
+      value: pick(cosmicRolePool, rand, 1)[0],
+      tone: "demean",
+    },
+    {
+      label: "Share of cosmic significance allocated to you",
+      value: `${significanceDust.toExponential(3)}%`,
+    },
+    {
+      label: "Probability the void noticed you",
+      value: `${(100 - mainCharacter).toFixed(2)}%`,
+    },
+    {
+      label: "Universe response time to your manifestations",
+      value: "∞ business days",
+    },
+    {
+      label: "Who cares?",
+      value: pick(whoCaresPool, rand, 1)[0],
+      tone: "demean",
+    },
+    {
+      label: "Significance status",
+      value: pick(significanceStatusPool, rand, 1)[0],
+      tone: "demean",
+    },
+  ];
+
   return {
     age,
     caseId,
@@ -105,8 +206,10 @@ export function generateDread(age: number): DreadReport {
     coffeeIndifference,
     remainingSunsets,
     significanceDust,
+    npcScore,
     verdict,
     omens: pick(omensPool, rand, 3),
+    receipt,
     generatedAt: new Date().toLocaleString(),
   };
 }
