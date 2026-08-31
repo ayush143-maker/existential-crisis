@@ -60,26 +60,18 @@ export default function DreadReportView({
         <section className="panel span-12">
           <h3 className="panel-title">Itemized insignificance</h3>
           <div className="receipt">
-            <div className="receipt-row">
-              <span>Estimated remaining sunsets</span>
-              <strong>{data.remainingSunsets.toLocaleString()}</strong>
-            </div>
-            <div className="receipt-row">
-              <span>Share of cosmic significance allocated to you</span>
-              <strong>{data.significanceDust.toExponential(3)}%</strong>
-            </div>
-            <div className="receipt-row">
-              <span>Cosmic concern index</span>
-              <strong>{data.universeCareIndex.toExponential(3)}</strong>
-            </div>
-            <div className="receipt-row">
-              <span>Universe response time to your manifestations</span>
-              <strong>∞ business days</strong>
-            </div>
-            <div className="receipt-row">
-              <span>Probability the void noticed you</span>
-              <strong>{(100 - data.mainCharacter).toFixed(2)}%</strong>
-            </div>
+            {data.receipt.map((row) => (
+              <div className="receipt-row" key={row.label}>
+                <span>{row.label}</span>
+                <strong
+                  className={
+                    row.tone === "demean" ? "receipt-value-demean" : undefined
+                  }
+                >
+                  {row.value}
+                </strong>
+              </div>
+            ))}
           </div>
         </section>
 
